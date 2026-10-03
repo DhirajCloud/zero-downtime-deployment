@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-APP_VERSION = "1.0.0"
+APP_VERSION = "3.0.0"
 
 app = FastAPI(
     title="Zero Downtime Deployment API",
