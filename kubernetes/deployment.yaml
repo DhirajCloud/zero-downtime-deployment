@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: zero-downtime-api:3.0.0
+          image: zero-downtime-api:4.0.1
           imagePullPolicy: IfNotPresent
 
           ports:
@@ -55,4 +55,3 @@ spec:
             capabilities:
               drop:
                 - ALL
-            runAsNonRoot: true
