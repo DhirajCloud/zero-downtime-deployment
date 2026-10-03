@@ -1,15 +1,12 @@
 name: CD
 
 on:
-  workflow_run:
-    workflows:
-      - CI
-    types:
-      - completed
+  push:
+    branches:
+      - main
 
 jobs:
-  validate:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  validate-kubernetes:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,11 +20,4 @@ jobs:
 
       - name: Validate Kubernetes manifests
         run: |
-          kubectl apply \
-            --dry-run=client \
-            -f kubernetes/namespace.yaml \
-            -f kubernetes/configmap.yaml \
-            -f kubernetes/deployment.yaml \
-            -f kubernetes/service.yaml \
-            -f kubernetes/ingress.yaml \
-            -f kubernetes/hpa.yaml
+          kubectl apply --dry-run=client -f kubernetes/
