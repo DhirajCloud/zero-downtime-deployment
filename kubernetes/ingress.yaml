@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: zero-downtime-api
+  namespace: zero-downtime
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: zero-downtime.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: zero-downtime-api
+                port:
+                  number: 8000

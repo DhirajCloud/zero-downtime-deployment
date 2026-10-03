@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zero-downtime-api-config
+  namespace: zero-downtime
+data:
+  APP_ENV: "production"
+  APP_NAME: "zero-downtime-api"
