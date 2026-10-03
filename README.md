@@ -1,35 +1,47 @@
 # Zero-Downtime Deployment Platform
 
-A production-style DevOps project demonstrating how to deploy application updates on Kubernetes with minimal service disruption using rolling deployments, health checks, container security, CI/CD validation, autoscaling configuration, and monitoring.
+A hands-on DevOps capstone project demonstrating how to deploy application updates on Kubernetes using rolling deployments, health checks, container security, CI/CD, rollback, monitoring, and infrastructure-as-code concepts.
+
+> **Implementation note:** The completed deployment is currently demonstrated locally using Docker Desktop Kubernetes. GitHub Actions performs application testing, Docker image builds, and Kubernetes manifest validation. AWS/EKS and ECR are documented as production extensions and are not claimed as completed infrastructure.
+
+---
 
 ## Project Overview
 
-The goal of this project is to build a deployment platform where a new application version can be released without intentionally taking the application offline.
+The objective of this project is to solve a common production deployment problem:
 
-The platform demonstrates:
+> How can a new application version be released without intentionally taking the application offline?
 
-- Containerized FastAPI application
-- Docker image hardening
-- Kubernetes rolling deployments
-- Readiness and liveness probes
-- Kubernetes resource requests and limits
-- Horizontal Pod Autoscaler configuration
+The platform uses multiple Kubernetes replicas and a controlled RollingUpdate strategy. New Pods must become healthy before old Pods are removed, allowing application capacity to remain available during the deployment.
+
+The project combines:
+
+- FastAPI
+- Python
+- Docker
+- Kubernetes
+- GitHub Actions
+- Kubernetes health probes
+- Rolling deployments
+- Rollback
 - Kubernetes Service
-- Ingress configuration
+- Ingress
 - ConfigMap
-- Container security controls
-- GitHub Actions CI
-- GitHub Actions Kubernetes manifest validation
-- Prometheus monitoring
-- Grafana visualization
+- Horizontal Pod Autoscaler configuration
+- Container security
+- Prometheus
+- Grafana
 - Alertmanager
-- Rollback testing
-- Terraform infrastructure-as-code scaffold
+- Terraform
+- Production troubleshooting
 
-## Architecture
+---
+
+# Architecture
 
 ```mermaid
 flowchart LR
+
     A[Developer] --> B[GitHub Repository]
 
     B --> C[GitHub Actions CI]
@@ -44,6 +56,7 @@ flowchart LR
     H --> I[Docker Desktop Kubernetes]
 
     I --> J[Kubernetes Deployment]
+
     J --> K[Pod 1]
     J --> L[Pod 2]
     J --> M[Pod 3]
