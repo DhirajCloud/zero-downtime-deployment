@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zero-downtime-api
+  namespace: zero-downtime
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: zero-downtime-api
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+
+  template:
+    metadata:
+      labels:
+        app: zero-downtime-api
+
+    spec:
+      containers:
+        - name: api
+          image: zero-downtime-api:3.0.0
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 8000
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
