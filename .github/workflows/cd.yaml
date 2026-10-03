@@ -19,16 +19,14 @@ jobs:
           python-version: "3.12"
 
       - name: Install YAML validator
-        run: |
-          python -m pip install --upgrade pip
-          pip install pyyaml
+        run: pip install pyyaml
 
-      - name: Validate Kubernetes YAML
+      - name: Validate Kubernetes manifests
         run: |
           python - <<'PY'
           import glob
-          import yaml
           import sys
+          import yaml
 
           files = glob.glob("kubernetes/*.yaml")
 
@@ -38,22 +36,19 @@ jobs:
 
           for file in files:
               print(f"Validating {file}")
-              with open(file, "r") as f:
-                  documents = list(yaml.safe_load_all(f))
 
-              if not documents:
-                  print(f"ERROR: {file} is empty")
-                  sys.exit(1)
+              with open(file) as f:
+                  documents = list(yaml.safe_load_all(f))
 
               for document in documents:
                   if not isinstance(document, dict):
-                      print(f"ERROR: {file} contains an invalid YAML document")
-                      sys.exit(1)
+                      raise ValueError(f"Invalid YAML document: {file}")
 
                   for field in ("apiVersion", "kind", "metadata"):
                       if field not in document:
-                          print(f"ERROR: {file} missing {field}")
-                          sys.exit(1)
+                          raise ValueError(
+                              f"{file} missing required field: {field}"
+                          )
 
-          print("All Kubernetes manifests passed YAML validation.")
+          print("All Kubernetes manifests passed validation.")
           PY
