@@ -13,11 +13,47 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          version: latest
+          python-version: "3.12"
 
-      - name: Validate Kubernetes manifests
+      - name: Install YAML validator
         run: |
-          kubectl apply --dry-run=client --validate=false -f kubernetes/
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Validate Kubernetes YAML
+        run: |
+          python - <<'PY'
+          import glob
+          import yaml
+          import sys
+
+          files = glob.glob("kubernetes/*.yaml")
+
+          if not files:
+              print("No Kubernetes manifests found")
+              sys.exit(1)
+
+          for file in files:
+              print(f"Validating {file}")
+              with open(file, "r") as f:
+                  documents = list(yaml.safe_load_all(f))
+
+              if not documents:
+                  print(f"ERROR: {file} is empty")
+                  sys.exit(1)
+
+              for document in documents:
+                  if not isinstance(document, dict):
+                      print(f"ERROR: {file} contains an invalid YAML document")
+                      sys.exit(1)
+
+                  for field in ("apiVersion", "kind", "metadata"):
+                      if field not in document:
+                          print(f"ERROR: {file} missing {field}")
+                          sys.exit(1)
+
+          print("All Kubernetes manifests passed YAML validation.")
+          PY
